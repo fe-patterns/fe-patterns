@@ -1,0 +1,26 @@
+{
+  "name": "fe-patterns-catalog",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Workspace root for the fe-patterns Catalog (Patterns, Libraries, Skills, Blog posts).",
+  "type": "module",
+  "scripts": {
+    "build": "vp build",
+    "test": "vp test",
+    "lint": "vp lint",
+    "format": "vp fmt",
+    "check": "vp check",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "release": "vp build && changeset publish"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.27.0",
+    "typescript": "^5.7.0",
+    "vite-plus": "0.2.1"
+  },
+  "engines": {
+    "node": ">=24.11.0"
+  },
+  "packageManager": "pnpm@11.9.0"
+}

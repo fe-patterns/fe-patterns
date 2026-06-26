@@ -1,0 +1,9 @@
+# Authored prose (Patterns, Blog posts, CONTEXT) is hand-formatted, not owned by
+# the code formatter. Revisit when the content milestone defines doc tooling.
+*.md
+**/*.md
+
+# Build output / deps (also in .gitignore, listed for tools reading this directly).
+node_modules/
+dist/
+.vite/
