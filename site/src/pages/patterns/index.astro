@@ -1,0 +1,26 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../../layouts/Base.astro";
+
+const patterns = (await getCollection("patterns")).sort((a, b) =>
+  (a.data.title ?? a.id).localeCompare(b.data.title ?? b.id),
+);
+---
+
+<Base title="Patterns" description="Frontend patterns — the central unit of the catalog.">
+  <h1>Patterns</h1>
+  {
+    patterns.length === 0 ? (
+      <p class="empty">No patterns published yet.</p>
+    ) : (
+      <ul class="entry-list">
+        {patterns.map((p) => (
+          <li>
+            <a href={`/patterns/${p.id}`}>{p.data.title ?? p.id}</a>
+            {p.data.description && <div class="meta">{p.data.description}</div>}
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</Base>

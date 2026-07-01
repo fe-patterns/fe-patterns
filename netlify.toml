@@ -1,0 +1,9 @@
+# Netlify deploys the public Catalog repo (fe-patterns) standalone. The site is a
+# workspace package under site/; install runs at the repo root so the pnpm
+# workspace resolves, then only the site is built.
+[build]
+  command = "pnpm install --frozen-lockfile && pnpm --filter fe-patterns-site build"
+  publish = "site/dist"
+
+[build.environment]
+  NODE_VERSION = "24"

@@ -1,0 +1,32 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../../layouts/Base.astro";
+
+const posts = (await getCollection("blog")).sort(
+  (a, b) =>
+    (b.data.date?.getTime() ?? 0) - (a.data.date?.getTime() ?? 0),
+);
+
+const fmt = (d?: Date) =>
+  d
+    ? d.toISOString().slice(0, 10).replace(/-/g, ".")
+    : "";
+---
+
+<Base title="Blog" description="Posts exploring frontend patterns.">
+  <h1>Blog</h1>
+  {
+    posts.length === 0 ? (
+      <p class="empty">No posts yet.</p>
+    ) : (
+      <ul class="entry-list">
+        {posts.map((post) => (
+          <li>
+            <a href={`/blog/${post.id}`}>{post.data.title ?? post.id}</a>
+            <div class="meta">{fmt(post.data.date)}</div>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</Base>

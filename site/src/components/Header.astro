@@ -1,0 +1,23 @@
+---
+const nav = [
+  { href: "/patterns", label: "Patterns" },
+  { href: "/blog", label: "Blog" },
+  { href: "/about", label: "About" },
+];
+const path = Astro.url.pathname;
+const isActive = (href: string) =>
+  path === href || path.startsWith(href + "/");
+---
+
+<header class="site-header container">
+  <a href="/" class="brand">fe-patterns</a>
+  <nav>
+    {
+      nav.map((item) => (
+        <a href={item.href} aria-current={isActive(item.href) ? "page" : undefined}>
+          {item.label}
+        </a>
+      ))
+    }
+  </nav>
+</header>
