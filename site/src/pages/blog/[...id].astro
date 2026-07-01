@@ -1,0 +1,38 @@
+---
+import { getCollection, render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+  return posts.map((entry) => ({ params: { id: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+
+const title = entry.data.title ?? entry.id;
+const explores = entry.data.explores ?? [];
+const fmt = (d?: Date) =>
+  d ? d.toISOString().slice(0, 10).replace(/-/g, ".") : "";
+---
+
+<Base title={title} description={entry.data.description}>
+  <article class="prose">
+    <h1>{title}</h1>
+    {entry.data.date && <p class="post-meta">{fmt(entry.data.date)}</p>}
+    <Content />
+    {
+      explores.length > 0 && (
+        <footer class="post-explores">
+          <span>Explores</span>
+          {explores.map((slug, i) => (
+            <Fragment>
+              {i > 0 ? ", " : ""}
+              <a href={`/patterns/${slug}`}>{slug}</a>
+            </Fragment>
+          ))}
+        </footer>
+      )
+    }
+  </article>
+</Base>

@@ -11,6 +11,11 @@ const patterns = defineCollection({
     .object({
       title: z.string().optional(),
       description: z.string().optional(),
+      // Edges authored on the Pattern (ADR-0001). Optional here — the
+      // "must serve a Goal" invariant is a domain rule, not a build gate.
+      "contributes-to": z.array(z.string()).optional(),
+      uses: z.array(z.string()).optional(),
+      "implemented-by": z.string().nullish(),
     })
     .passthrough(),
 });
@@ -22,6 +27,8 @@ const blog = defineCollection({
       title: z.string().optional(),
       description: z.string().optional(),
       date: z.coerce.date().optional(),
+      // A Blog post explores one or more Patterns.
+      explores: z.array(z.string()).optional(),
     })
     .passthrough(),
 });

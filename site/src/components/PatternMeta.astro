@@ -1,0 +1,66 @@
+---
+interface Props {
+  goals?: string[];
+  uses?: string[];
+  implementedBy?: string;
+  exploredBy?: { id: string; title: string }[];
+}
+
+const { goals = [], uses = [], implementedBy, exploredBy = [] } = Astro.props;
+const hasAny =
+  goals.length > 0 || uses.length > 0 || !!implementedBy || exploredBy.length > 0;
+---
+
+{
+  hasAny && (
+    <dl class="pattern-meta">
+      {goals.length > 0 && (
+        <div>
+          <dt>Serves</dt>
+          <dd>
+            {goals.map((g, i) => (
+              <Fragment>
+                {i > 0 ? ", " : ""}
+                <a href="/about#goals">{g}</a>
+              </Fragment>
+            ))}
+          </dd>
+        </div>
+      )}
+      {uses.length > 0 && (
+        <div>
+          <dt>Uses</dt>
+          <dd>
+            {uses.map((slug, i) => (
+              <Fragment>
+                {i > 0 ? ", " : ""}
+                <a href={`/patterns/${slug}`}>{slug}</a>
+              </Fragment>
+            ))}
+          </dd>
+        </div>
+      )}
+      {implementedBy && (
+        <div>
+          <dt>Implemented by</dt>
+          <dd>
+            <code>{implementedBy}</code>
+          </dd>
+        </div>
+      )}
+      {exploredBy.length > 0 && (
+        <div>
+          <dt>Explored in</dt>
+          <dd>
+            {exploredBy.map((post, i) => (
+              <Fragment>
+                {i > 0 ? ", " : ""}
+                <a href={`/blog/${post.id}`}>{post.title}</a>
+              </Fragment>
+            ))}
+          </dd>
+        </div>
+      )}
+    </dl>
+  )
+}
