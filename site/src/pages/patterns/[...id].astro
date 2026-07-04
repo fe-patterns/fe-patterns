@@ -13,7 +13,7 @@ const { Content } = await render(entry);
 
 const goals = entry.data["contributes-to"] ?? [];
 const uses = entry.data["uses"] ?? [];
-const implementedBy = entry.data["implemented-by"];
+const implementedBy = entry.data["implemented-by"] ?? undefined;
 
 // Projection back-link derived from the blog side (Blog -explores-> Pattern).
 const exploredBy = (await getCollection("blog"))

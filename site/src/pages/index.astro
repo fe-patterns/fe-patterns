@@ -3,6 +3,7 @@ import { getEntry, render } from "astro:content";
 import Base from "../layouts/Base.astro";
 
 const entry = await getEntry("pages", "home");
+if (!entry) throw new Error("Missing content page: pages/home.md");
 const { Content } = await render(entry);
 ---
 
