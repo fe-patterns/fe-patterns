@@ -5,6 +5,7 @@
   "description": "Workspace root for the fe-patterns Catalog (Patterns, Libraries, Skills, Blog posts).",
   "type": "module",
   "scripts": {
+    "dev": "pnpm --filter fe-patterns-site dev",
     "build": "vp build",
     "test": "vp test",
     "lint": "vp lint",
