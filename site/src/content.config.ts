@@ -33,4 +33,20 @@ const blog = defineCollection({
     .passthrough(),
 });
 
-export const collections = { patterns, blog };
+// Static site pages (home, about) authored as markdown. Unlike patterns/blog,
+// these are site chrome rather than Catalog source-of-truth, so they live inside
+// the site (./src/content/pages) rather than being projected from the root.
+const pages = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/pages" }),
+  schema: z
+    .object({
+      title: z.string().optional(),
+      description: z.string().optional(),
+      goals: z
+        .array(z.object({ name: z.string(), blurb: z.string() }))
+        .optional(),
+    })
+    .passthrough(),
+});
+
+export const collections = { patterns, blog, pages };

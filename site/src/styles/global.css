@@ -292,6 +292,13 @@ blockquote {
   margin-top: 0.25rem;
 }
 
+/* Markdown-authored static pages (home, about): the first paragraph after the
+   H1 reads as the lede. */
+.page > h1 + p {
+  font-size: 1.2rem;
+  color: var(--muted);
+}
+
 .prose :is(h2, h3) {
   scroll-margin-top: 2rem;
 }
