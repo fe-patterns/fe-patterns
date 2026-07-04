@@ -18,14 +18,32 @@
   --accent: #3b5bdb;
 }
 
+/* Dark palette — applied by OS preference, unless the reader forced light. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --bg: #111110;
     --fg: #ececea;
     --muted: #9a9a93;
     --border: #2a2a26;
     --accent: #91a7ff;
   }
+}
+
+/* Explicit reader override via the theme toggle. */
+:root[data-theme="dark"] {
+  --bg: #111110;
+  --fg: #ececea;
+  --muted: #9a9a93;
+  --border: #2a2a26;
+  --accent: #91a7ff;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
 }
 
 *,
@@ -100,6 +118,53 @@ body {
 .site-header nav a:hover,
 .site-header nav a[aria-current="page"] {
   color: var(--fg);
+}
+
+/* Theme toggle */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  line-height: 0;
+}
+
+.theme-toggle:hover {
+  color: var(--fg);
+}
+
+.theme-toggle svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+/* Show the icon for the theme you'd switch *to*. Light is the default,
+   so the moon shows unless the effective theme is dark. */
+.theme-toggle .icon-sun {
+  display: none;
+}
+
+:root[data-theme="dark"] .theme-toggle .icon-sun {
+  display: block;
+}
+
+:root[data-theme="dark"] .theme-toggle .icon-moon {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-toggle .icon-sun {
+    display: block;
+  }
+
+  :root:not([data-theme="light"]) .theme-toggle .icon-moon {
+    display: none;
+  }
 }
 
 main {

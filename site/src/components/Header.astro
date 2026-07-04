@@ -1,5 +1,6 @@
 ---
 import Logo from "./Logo.astro";
+import ThemeToggle from "./ThemeToggle.astro";
 
 const nav = [
   { href: "/patterns", label: "Patterns" },
@@ -24,5 +25,6 @@ const isActive = (href: string) =>
         </a>
       ))
     }
+    <ThemeToggle />
   </nav>
 </header>

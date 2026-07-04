@@ -23,6 +23,12 @@ const fullTitle = title ? `${title} · ${siteName}` : siteName;
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <title>{fullTitle}</title>
     {description && <meta name="description" content={description} />}
+    <script is:inline>
+      const saved = localStorage.getItem("theme");
+      if (saved === "light" || saved === "dark") {
+        document.documentElement.dataset.theme = saved;
+      }
+    </script>
   </head>
   <body>
     <Header />
