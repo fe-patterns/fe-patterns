@@ -1,4 +1,6 @@
 ---
+import Logo from "./Logo.astro";
+
 const nav = [
   { href: "/patterns", label: "Patterns" },
   { href: "/blog", label: "Blog" },
@@ -10,7 +12,10 @@ const isActive = (href: string) =>
 ---
 
 <header class="site-header container">
-  <a href="/" class="brand">fe-patterns</a>
+  <a href="/" class="brand">
+    <Logo class="brand-mark" />
+    <span>fe-patterns</span>
+  </a>
   <nav>
     {
       nav.map((item) => (
