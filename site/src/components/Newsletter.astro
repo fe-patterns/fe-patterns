@@ -80,6 +80,11 @@ const {
     gap: 1rem;
   }
 
+  /* [hidden] must win over the display rule above so showDone() truly hides the form. */
+  .newsletter-form[hidden] {
+    display: none;
+  }
+
   .newsletter-field {
     display: flex;
     flex-direction: column;
@@ -173,6 +178,7 @@ const {
 
   for (const root of document.querySelectorAll<HTMLElement>("[data-newsletter]")) {
     const form = root.querySelector<HTMLFormElement>("[data-form]");
+    const heading = root.querySelector<HTMLElement>("h2");
     const blurb = root.querySelector<HTMLElement>(".newsletter-blurb");
     const errorEl = root.querySelector<HTMLElement>("[data-error]");
     const doneEl = root.querySelector<HTMLElement>("[data-done]");
@@ -180,8 +186,10 @@ const {
 
     const button = form.querySelector<HTMLButtonElement>("button[type=submit]");
 
+    // Show only the confirmation message — hide the heading, blurb, and form.
     function showDone(message: string): void {
       form!.hidden = true;
+      if (heading) heading.hidden = true;
       if (blurb) blurb.hidden = true;
       doneEl!.textContent = message;
       doneEl!.hidden = false;
