@@ -1,6 +1,7 @@
 node_modules/
 dist/
 .vite/
+.env
 
 # OS / editor / agent noise
 .DS_Store
