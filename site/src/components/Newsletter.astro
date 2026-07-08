@@ -1,0 +1,115 @@
+---
+// Buttondown email signup. The username is public (it appears in the form
+// action), so it's hardcoded here; PUBLIC_BUTTONDOWN_USERNAME can override it
+// without editing this file. Buttondown is the owned list; full-content
+// RSS-to-email links back to the blog as canonical. See docs/newsletter-setup.md.
+const username =
+  import.meta.env.PUBLIC_BUTTONDOWN_USERNAME ?? "zaboco";
+const action = `https://buttondown.com/api/emails/embed-subscribe/${username}`;
+const popup = `https://buttondown.com/${username}`;
+
+interface Props {
+  heading?: string;
+  blurb?: string;
+}
+const {
+  heading = "Get new posts by email",
+  blurb = "Occasional notes on frontend patterns. No spam, unsubscribe anytime.",
+} = Astro.props;
+---
+
+<aside class="newsletter">
+  <h2>{heading}</h2>
+  <p>{blurb}</p>
+  <form
+    class="newsletter-form embeddable-buttondown-form"
+    action={action}
+    method="post"
+    target="popupwindow"
+    onsubmit={`window.open('${popup}', 'popupwindow')`}
+  >
+    <label class="sr-only" for="bd-email">Email address</label>
+    <input
+      id="bd-email"
+      type="email"
+      name="email"
+      placeholder="you@example.com"
+      autocomplete="email"
+      required
+    />
+    <input type="hidden" value="1" name="embed" />
+    <button type="submit">Subscribe</button>
+  </form>
+</aside>
+
+<style>
+  .newsletter {
+    margin-top: 3rem;
+    padding: 1.5rem 1.5rem 1.75rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: color-mix(in oklab, var(--fg) 3%, transparent);
+  }
+
+  .newsletter h2 {
+    margin-block: 0 0.35rem;
+    font-size: 1.2rem;
+  }
+
+  .newsletter p {
+    margin-block: 0 1rem;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  .newsletter-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  .newsletter-form input[type="email"] {
+    flex: 1 1 16rem;
+    min-width: 0;
+    padding: 0.6rem 0.8rem;
+    font: inherit;
+    font-size: 0.95rem;
+    color: var(--fg);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+
+  .newsletter-form input[type="email"]:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+
+  .newsletter-form button {
+    padding: 0.6rem 1.1rem;
+    font: inherit;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--bg);
+    background: var(--accent);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  .newsletter-form button:hover {
+    filter: brightness(1.05);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>

@@ -1,6 +1,7 @@
 ---
 import { getEntry, render } from "astro:content";
 import Base from "../layouts/Base.astro";
+import Newsletter from "../components/Newsletter.astro";
 
 const entry = await getEntry("pages", "home");
 if (!entry) throw new Error("Missing content page: pages/home.md");
@@ -11,4 +12,5 @@ const { Content } = await render(entry);
     <div class="prose page">
         <Content />
     </div>
+    <Newsletter />
 </Base>
