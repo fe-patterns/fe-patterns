@@ -29,6 +29,9 @@ const blog = defineCollection({
       date: z.coerce.date().optional(),
       // A Blog post explores one or more Patterns.
       explores: z.array(z.string()).optional(),
+      // Optional hero image (a filename in site/src/assets/hero/). Drives both
+      // the in-page hero band and the Variant B OG card.
+      hero: z.string().optional(),
     })
     .passthrough(),
 });
