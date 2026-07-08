@@ -48,10 +48,23 @@ list, so switching is export → import._
 ### Local testing
 
 `pnpm dev` (astro dev) does **not** run the Function, so `/api/subscribe` 404s and
-the form shows an error. To exercise the real flow locally, run `netlify dev` (with
-`BUTTONDOWN_API_KEY` in a root `.env`), or just test on a Netlify deploy preview.
-Use a Gmail `+alias` (e.g. `you+test1@gmail.com`) so you can re-test without burning
-your real address on Buttondown's suppression list.
+the form shows an error. Two ways to test the real flow:
+
+- **Deploy preview (recommended).** Push the branch; open the Netlify preview and
+  submit the form. This is the only place a *successful* subscribe reliably works —
+  Buttondown's spam firewall rejects subscribes coming from a localhost/datacenter
+  IP (you'll get "blocked by your firewall"), but a real preview has a real visitor
+  IP. It also avoids the `netlify dev` quirks below.
+- **`netlify dev` locally.** Needs `BUTTONDOWN_API_KEY` in a root `.env` (gitignored)
+  and the functions dir passed explicitly (the CLI won't auto-load it from
+  `[functions]` in dev): `netlify dev -f netlify/functions`, serving on
+  http://localhost:8888. Astro self-daemonizes, so stop it afterwards with
+  `pnpm --filter fe-patterns-site exec astro dev stop`. Good for testing the proxy
+  and error paths; the success path will likely hit the firewall as above.
+
+Either way, use a Gmail `+alias` (e.g. `you+test1@gmail.com`) so you can re-test
+without burning your real address on Buttondown's suppression list — and don't
+delete/unsubscribe the alias afterward, or it gets suppressed too.
 
 ## Publishing a post (per post — manual send)
 
