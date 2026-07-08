@@ -18,19 +18,40 @@ list, so switching is export → import._
   link/image URLs rewritten to absolute so they resolve in email clients.
 - **Feed discovery** `<link rel="alternate" type="application/rss+xml">` in
   `site/src/layouts/Base.astro`.
-- **Signup form** `site/src/components/Newsletter.astro` — a Buttondown embed,
-  rendered at the end of every blog post and on the home page. The username is
-  hardcoded to `zaboco` (it's public — it appears in the form action), overridable
-  via `PUBLIC_BUTTONDOWN_USERNAME` if ever needed.
+- **Signup form** `site/src/components/Newsletter.astro` — rendered at the end of
+  every blog post and on the home page. Collects an optional first name
+  (`metadata__first_name` → `subscriber.metadata.first_name`) and a required email.
+  The username is hardcoded to `zaboco` (it's public — it appears in the form
+  action), overridable via `PUBLIC_BUTTONDOWN_USERNAME` if ever needed.
+- **Subscribe proxy** `netlify/functions/subscribe.mjs` (Netlify Functions v2, path
+  `/api/subscribe`) — holds the Buttondown **API key server-side** and returns JSON.
+  The form's JS POSTs to it and renders the result inline, so the reader never
+  leaves the site. On success it sets a first-party `nl_subscribed` cookie (mirrored
+  to `localStorage`) so a returning reader sees a "you're subscribed" state instead
+  of the form. This is a soft, per-browser hint only — not authoritative state
+  (anonymous visitors can't be identified server-side; clearing cookies resets it).
+  **Without JS the form still posts straight to Buttondown** (progressive enhancement).
 
 ## One-time setup (Buttondown dashboard — you do this)
 
 1. Create the Buttondown account for username `zaboco` (free tier). The signup form
    already points at it — no env config needed. (To use a different username, set
    `PUBLIC_BUTTONDOWN_USERNAME`; see `site/.env.example`.)
-2. **Web archives:** with full-content emails you may *want* archives on (the email
+2. **Set `BUTTONDOWN_API_KEY` in Netlify** (Site settings → Environment variables) —
+   the subscribe Function reads it server-side. Grab it from Buttondown → Settings →
+   Programming → API. **Not** committed; **not** `PUBLIC_`-prefixed (must stay
+   server-only). Free-tier Netlify Functions comfortably cover a signup form's volume.
+3. **Web archives:** with full-content emails you may *want* archives on (the email
    is a complete read), but the blog remains canonical. Your call — comments will
    live on the blog (giscus, later), not the archive.
+
+### Local testing
+
+`pnpm dev` (astro dev) does **not** run the Function, so `/api/subscribe` 404s and
+the form shows an error. To exercise the real flow locally, run `netlify dev` (with
+`BUTTONDOWN_API_KEY` in a root `.env`), or just test on a Netlify deploy preview.
+Use a Gmail `+alias` (e.g. `you+test1@gmail.com`) so you can re-test without burning
+your real address on Buttondown's suppression list.
 
 ## Publishing a post (per post — manual send)
 
