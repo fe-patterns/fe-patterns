@@ -12,7 +12,7 @@ export const config = { path: "/api/subscribe" };
 
 const ONE_YEAR = 60 * 60 * 24 * 365;
 
-export default async (req) => {
+export default async (req, context) => {
   if (req.method !== "POST") {
     return json({ status: "error", message: "Method not allowed." }, 405);
   }
@@ -38,6 +38,14 @@ export default async (req) => {
     );
   }
 
+  // Forward the real visitor IP so Buttondown's spam firewall scores the human,
+  // not our server. Without this, every subscribe looks like it comes from
+  // Netlify's datacenter IP and gets "blocked by your firewall".
+  const ip =
+    context?.ip ||
+    req.headers.get("x-nf-client-connection-ip") ||
+    (req.headers.get("x-forwarded-for") ?? "").split(",")[0].trim();
+
   let res, data;
   try {
     res = await fetch("https://api.buttondown.com/v1/subscribers", {
@@ -48,6 +56,7 @@ export default async (req) => {
       },
       body: JSON.stringify({
         email_address: email,
+        ...(ip ? { ip_address: ip } : {}),
         ...(firstName ? { metadata: { first_name: firstName } } : {}),
       }),
     });
