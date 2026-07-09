@@ -1,0 +1,249 @@
+---
+// Buttondown email signup. The username is public (it appears in the form
+// action), so it's hardcoded here; PUBLIC_BUTTONDOWN_USERNAME can override it
+// without editing this file. Buttondown is the owned list; full-content
+// RSS-to-email links back to the blog as canonical. See docs/newsletter-setup.md.
+//
+// Submissions are enhanced by JS to POST to the /api/subscribe Netlify Function,
+// which proxies Buttondown server-side and returns JSON we render inline (reader
+// stays on the site). Without JS the form still posts straight to Buttondown.
+const username =
+  import.meta.env.PUBLIC_BUTTONDOWN_USERNAME ?? "zaboco";
+const action = `https://buttondown.com/api/emails/embed-subscribe/${username}`;
+
+interface Props {
+  heading?: string;
+  blurb?: string;
+}
+const {
+  heading = "Get new posts by email",
+  blurb = "Occasional notes on frontend patterns. No spam, unsubscribe anytime.",
+} = Astro.props;
+---
+
+<aside class="newsletter" data-newsletter>
+  <h2>{heading}</h2>
+  <p class="newsletter-blurb">{blurb}</p>
+
+  <form class="newsletter-form embeddable-buttondown-form" action={action} method="post" data-form>
+    <div class="newsletter-field">
+      <label for="bd-first-name">First name</label>
+      <input
+        type="text"
+        name="metadata__first_name"
+        id="bd-first-name"
+        placeholder="Name"
+        autocomplete="given-name"
+      />
+    </div>
+    <div class="newsletter-field">
+      <label for="bd-email">Email <span class="req">*</span></label>
+      <input
+        type="email"
+        name="email"
+        id="bd-email"
+        placeholder="you@example.com"
+        autocomplete="email"
+        required
+      />
+    </div>
+    <p class="newsletter-error" data-error hidden aria-live="polite"></p>
+    <button type="submit">Subscribe</button>
+  </form>
+
+  <p class="newsletter-done" data-done hidden aria-live="polite"></p>
+</aside>
+
+<style>
+  .newsletter {
+    margin-top: 3rem;
+    padding: 1.75rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: color-mix(in oklab, var(--fg) 3%, transparent);
+  }
+
+  .newsletter h2 {
+    margin-block: 0 0.35rem;
+    font-size: 1.2rem;
+  }
+
+  .newsletter-blurb {
+    margin-block: 0 1.25rem;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  .newsletter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  /* [hidden] must win over the display rule above so showDone() truly hides the form. */
+  .newsletter-form[hidden] {
+    display: none;
+  }
+
+  .newsletter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .newsletter-field label {
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  .newsletter-field .req {
+    color: var(--accent);
+  }
+
+  .newsletter-form input {
+    width: 100%;
+    padding: 0.75rem 0.9rem;
+    font: inherit;
+    font-size: 1rem;
+    color: var(--fg);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+
+  .newsletter-form input::placeholder {
+    color: var(--muted);
+  }
+
+  .newsletter-form input:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+
+  .newsletter-form button {
+    width: 100%;
+    margin-top: 0.25rem;
+    padding: 0.75rem 1.1rem;
+    font: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--bg);
+    background: var(--accent);
+    border: 1px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  .newsletter-form button:hover {
+    filter: brightness(1.05);
+  }
+
+  .newsletter-form button:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+
+  .newsletter-error {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--accent);
+  }
+
+  .newsletter-done {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 500;
+  }
+</style>
+
+<script>
+  const KEY = "nl_subscribed";
+
+  function alreadySubscribed(): boolean {
+    try {
+      if (localStorage.getItem(KEY) === "1") return true;
+    } catch {
+      // localStorage can throw in private mode; fall back to the cookie.
+    }
+    return document.cookie.split("; ").includes(`${KEY}=1`);
+  }
+
+  function remember(): void {
+    try {
+      localStorage.setItem(KEY, "1");
+    } catch {
+      // ignore — the server-set cookie is the fallback
+    }
+  }
+
+  for (const root of document.querySelectorAll<HTMLElement>("[data-newsletter]")) {
+    const form = root.querySelector<HTMLFormElement>("[data-form]");
+    const heading = root.querySelector<HTMLElement>("h2");
+    const blurb = root.querySelector<HTMLElement>(".newsletter-blurb");
+    const errorEl = root.querySelector<HTMLElement>("[data-error]");
+    const doneEl = root.querySelector<HTMLElement>("[data-done]");
+    if (!form || !doneEl) continue;
+
+    const button = form.querySelector<HTMLButtonElement>("button[type=submit]");
+
+    // Show only the confirmation message — hide the heading, blurb, and form.
+    function showDone(message: string): void {
+      form!.hidden = true;
+      if (heading) heading.hidden = true;
+      if (blurb) blurb.hidden = true;
+      doneEl!.textContent = message;
+      doneEl!.hidden = false;
+    }
+
+    if (alreadySubscribed()) {
+      showDone("You're subscribed — thanks for reading. ✓");
+      continue;
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (errorEl) errorEl.hidden = true;
+
+      const data = new FormData(form!);
+      const email = String(data.get("email") ?? "").trim();
+      const firstName = String(data.get("metadata__first_name") ?? "").trim();
+
+      const original = button?.textContent ?? "Subscribe";
+      if (button) {
+        button.disabled = true;
+        button.textContent = "Subscribing…";
+      }
+
+      try {
+        const res = await fetch("/api/subscribe", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, first_name: firstName }),
+        });
+        const body = await res.json().catch(() => ({}));
+
+        if (body.status === "subscribed") {
+          remember();
+          showDone("Almost there — check your inbox to confirm your subscription.");
+          return;
+        }
+        if (body.status === "already_subscribed") {
+          remember();
+          showDone("You're already on the list — thanks! ✓");
+          return;
+        }
+        throw new Error(body.message || "Something went wrong. Please try again.");
+      } catch (err) {
+        if (errorEl) {
+          errorEl.textContent =
+            err instanceof Error ? err.message : "Something went wrong. Please try again.";
+          errorEl.hidden = false;
+        }
+        if (button) {
+          button.disabled = false;
+          button.textContent = original;
+        }
+      }
+    });
+  }
+</script>

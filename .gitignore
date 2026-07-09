@@ -1,7 +1,12 @@
 node_modules/
 dist/
 .vite/
+.env
 
 # OS / editor / agent noise
 .DS_Store
 .claude/
+
+# Local Netlify dev artifacts
+.netlify
+deno.lock

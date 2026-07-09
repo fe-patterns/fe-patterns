@@ -7,3 +7,24 @@
 
 [build.environment]
   NODE_VERSION = "24"
+
+# Netlify Functions live at the repo root (not under site/). This is honored on
+# deploy. NOTE: `netlify dev` does NOT auto-load them from here — for local dev
+# you must pass the dir explicitly: `netlify dev -f netlify/functions`.
+[functions]
+  directory = "netlify/functions"
+
+# `netlify dev` local dev, serving the site + /api/subscribe together on :8888.
+# The command starts Astro and blocks (see scripts/netlify-dev-target.sh for why
+# a wrapper is needed). Run as: `netlify dev -f netlify/functions` (the -f is
+# required locally; see [functions] above). Needs BUTTONDOWN_API_KEY in a root
+# .env (gitignored). Note: Buttondown's spam firewall may reject subscribes from
+# a localhost/datacenter IP — a deploy preview (real visitor IP) is the reliable
+# way to test a successful subscribe end to end.
+[dev]
+  command = "sh scripts/netlify-dev-target.sh"
+  framework = "#custom"
+  targetPort = 4321
+  port = 8888
+  publish = "site/dist"
+  autoLaunch = false
