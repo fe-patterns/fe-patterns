@@ -51,7 +51,7 @@ function excerpt(body: string | undefined, max = 280): string {
 }
 
 export async function GET(context: APIContext) {
-  const site = (context.site ?? "https://fe-patterns.netlify.app").toString();
+  const site = (context.site ?? "https://fepatterns.dev").toString();
   const posts = (await getCollection("blog")).sort(
     (a, b) => (b.data.date?.getTime() ?? 0) - (a.data.date?.getTime() ?? 0),
   );

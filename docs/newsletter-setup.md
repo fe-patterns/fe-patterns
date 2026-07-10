@@ -76,7 +76,7 @@ delete/unsubscribe the alias afterward, or it gets suppressed too.
 
 _When manual sending gets tedious (higher cadence / more subscribers), flip
 Buttondown to a paid plan and point RSS-to-email at
-`https://fe-patterns.netlify.app/rss.xml` — the feed is already built for it._
+`https://fepatterns.dev/rss.xml` — the feed is already built for it._
 
 ## Notes
 
