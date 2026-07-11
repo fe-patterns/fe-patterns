@@ -3,11 +3,13 @@ import { getCollection } from "astro:content";
 import type { APIContext } from "astro";
 import MarkdownIt from "markdown-it";
 import sanitizeHtml from "sanitize-html";
+import { excerptBlocks, DEFAULT_EXCERPT_BLOCKS } from "../lib/excerpt";
 
-// Full-content feed: each item carries the whole post as rendered HTML in
-// `content:encoded`, plus a short `description` summary and a link back to the
-// blog. Buttondown turns this into RSS-to-email and ships the full post in the
-// email body. See docs/newsletter-setup.md.
+// Excerpt feed: each item carries the post's first few blocks (`excerpt-blocks`,
+// default 2) as rendered HTML in `content:encoded`, followed by a "Keep reading"
+// link back to the canonical post — the same teaser the newsletter email sends
+// (/blog/<id>/email.txt), so feed and email stay in step. See
+// docs/newsletter-setup.md.
 //
 // The body is plain markdown (the blog collection globs **/*.md), so we render
 // it with markdown-it and sanitize the result. This won't run Astro's exact
@@ -52,6 +54,7 @@ function excerpt(body: string | undefined, max = 280): string {
 
 export async function GET(context: APIContext) {
   const site = (context.site ?? "https://fepatterns.dev").toString();
+  const base = site.replace(/\/$/, "");
   const posts = (await getCollection("blog")).sort(
     (a, b) => (b.data.date?.getTime() ?? 0) - (a.data.date?.getTime() ?? 0),
   );
@@ -60,12 +63,17 @@ export async function GET(context: APIContext) {
     title: "fe-patterns · Blog",
     description: "Posts exploring frontend patterns.",
     site,
-    items: posts.map((post) => ({
-      title: post.data.title ?? post.id,
-      link: `/blog/${post.id}/`,
-      pubDate: post.data.date,
-      description: post.data.description ?? excerpt(post.body),
-      content: renderContent(post.body, site),
-    })),
+    items: posts.map((post) => {
+      const url = `${base}/blog/${post.id}/`;
+      const blocks = post.data["excerpt-blocks"] ?? DEFAULT_EXCERPT_BLOCKS;
+      const teaser = renderContent(excerptBlocks(post.body, blocks), site);
+      return {
+        title: post.data.title ?? post.id,
+        link: `/blog/${post.id}/`,
+        pubDate: post.data.date,
+        description: post.data.description ?? excerpt(post.body),
+        content: `${teaser}\n<p><a href="${url}">Keep reading →</a></p>`,
+      };
+    }),
   });
 }

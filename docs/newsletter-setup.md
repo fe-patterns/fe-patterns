@@ -2,20 +2,27 @@
 
 _Owned email list via [Buttondown](https://buttondown.com), free tier. Posts are
 sent **manually** — Buttondown gates automatic RSS-to-email behind a paid plan
-(~$9/mo), which isn't worth it pre-audience. The site's full-content `/rss.xml`
-feed is the source to copy from, and it's ready to switch to automation the day
-paying is justified. Migration path to Kit later if growth demands it; we own the
-list, so switching is export → import._
+(~$9/mo), which isn't worth it pre-audience. Each send is a short **excerpt** that
+links back to the full post on the site (Buttondown's Naked/HTML mode and custom
+CSS are both paywalled, so a full-post email would render plain anyway). Every post
+exposes its ready-to-paste email body at `/blog/<id>/email.txt`. Migration path to
+Kit later if growth demands it; we own the list, so switching is export → import._
 
 ## What's already wired in code (this branch)
 
-- **RSS feed** at `/rss.xml` (`site/src/pages/rss.xml.ts`) — **full-content**:
-  each item carries the whole post as rendered HTML in `content:encoded`, so the
-  Buttondown email ships the full post in the body. It also includes a short
-  `description` summary (frontmatter `description`, falling back to the first
-  paragraph) and a `link` back to the canonical blog post. The body is rendered
-  from markdown with `markdown-it` + `sanitize-html`, with root-relative
-  link/image URLs rewritten to absolute so they resolve in email clients.
+- **Email draft** at `/blog/<id>/email.txt`
+  (`site/src/pages/blog/[id]/email.txt.ts`) — the paste-ready newsletter body: the
+  post's excerpt (first `excerpt-blocks` blocks, default 2 — override per post in
+  frontmatter) followed by a `<buttondown-button>` "Keep reading" link to the
+  canonical post. Buttons work in Markdown mode, so no paid features are needed.
+- **RSS feed** at `/rss.xml` (`site/src/pages/rss.xml.ts`) — **excerpt feed**: each
+  item carries the same excerpt (`excerpt-blocks`) as rendered HTML in
+  `content:encoded`, ending in a "Keep reading" link back to the canonical post —
+  the same teaser the email sends, kept in step via the shared
+  `src/lib/excerpt.ts` helper. It also includes a short `description` summary
+  (frontmatter `description`, falling back to the first paragraph). The body is
+  rendered from markdown with `markdown-it` + `sanitize-html`, with root-relative
+  link/image URLs rewritten to absolute so they resolve in feed readers.
 - **Feed discovery** `<link rel="alternate" type="application/rss+xml">` in
   `site/src/layouts/Base.astro`.
 - **Signup form** `site/src/components/Newsletter.astro` — rendered at the end of
@@ -68,15 +75,18 @@ delete/unsubscribe the alias afterward, or it gets suppressed too.
 
 ## Publishing a post (per post — manual send)
 
-1. Publish the post to the blog as usual.
-2. In Buttondown, compose a new email. Copy the post body in — the rendered
-   `/rss.xml` item (`content:encoded`) is the ready-made full-content source, or
-   paste from the blog. Set the canonical/link to the blog URL for SEO.
-3. Send yourself a test first, confirm it renders, then send to the list.
+1. Publish the post to the blog as usual. To tune how much shows in the email,
+   set `excerpt-blocks: <n>` in the post's frontmatter (default 2).
+2. Open `https://fepatterns.dev/blog/<id>/email.txt` (or the deploy preview / local
+   `pnpm dev`) and copy its contents.
+3. In Buttondown, compose a new email **in Markdown mode** and paste. The
+   `<buttondown-button>` renders as the "Keep reading" button; set the
+   canonical/link to the blog URL for SEO.
+4. Send yourself a test first, confirm it renders, then send to the list.
 
 _When manual sending gets tedious (higher cadence / more subscribers), flip
 Buttondown to a paid plan and point RSS-to-email at
-`https://fepatterns.dev/rss.xml` — the feed is already built for it._
+`https://fepatterns.dev/rss.xml` — the feed already ships the excerpt + link._
 
 ## Notes
 
