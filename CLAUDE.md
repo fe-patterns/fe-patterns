@@ -4,6 +4,16 @@
 
 Always use **pnpm** — this is a pnpm workspace (`pnpm-workspace.yaml`, `pnpm-lock.yaml`). Never run `npm`/`yarn`; they create competing lockfiles and desync `node_modules`. Add deps with `pnpm add`, install with `pnpm install`.
 
-## Social cards / hero images
+## Agent skills
 
-The site's OG cards are rendered at build time (`site/src/lib/og-card.ts`, canvaskit-wasm). A blog post's optional `hero` frontmatter — a **PNG/JPEG/WebP** filename in `site/src/assets/hero/` — drives both the in-page hero band and the "Variant B" OG card; without it the post gets the generated "Variant A" card. Brand primitives (logo path, wordmark, accent) live in `site/src/lib/brand.ts`.
+### Issue tracker
+
+Issues are tracked as GitHub issues via the `gh` CLI. External PRs are not a triage surface (personal project). See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Active states are `ready-for-agent` and `ready-for-human`; the incoming-triage states are unused (no external reporter flow). See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: the kernel `CONTEXT.md` at the repo root. See `docs/agents/domain.md`.
