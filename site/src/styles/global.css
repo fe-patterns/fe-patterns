@@ -198,8 +198,23 @@ h1 {
 }
 
 h2 {
-  font-size: 1.4rem;
-  margin-block: 2.25rem 0.5rem;
+  font-size: 1.6rem;
+  margin-block: 3rem 0.75rem;
+}
+
+h3 {
+  font-size: 1.2rem;
+  margin-block: 2rem 0.4rem;
+}
+
+/* Section headings in article content get a hairline rule beneath them, marking
+   them as clearly higher-level than a plain h3. Reuses the 1px --border hairline
+   the site already uses for entry lists and footers. Scoped to prose/page so it
+   doesn't land on component headings like the newsletter CTA. */
+.prose h2,
+.page h2 {
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid var(--border);
 }
 
 p,
