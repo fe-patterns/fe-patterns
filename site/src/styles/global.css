@@ -102,6 +102,8 @@ body {
   height: 1.35rem;
   width: auto;
   display: block;
+  /* The mark fills with currentColor; tint it with the brand accent. */
+  color: var(--accent);
 }
 
 .site-header nav {
