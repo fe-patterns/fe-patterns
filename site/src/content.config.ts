@@ -32,6 +32,9 @@ const blog = defineCollection({
       // Optional hero image (a filename in site/src/assets/hero/). Drives both
       // the in-page hero band and the Variant B OG card.
       hero: z.string().optional(),
+      // How many leading blocks the newsletter excerpt shows (email + RSS).
+      // Defaults to DEFAULT_EXCERPT_BLOCKS (2) when omitted.
+      "excerpt-blocks": z.number().int().positive().optional(),
     })
     .passthrough(),
 });
