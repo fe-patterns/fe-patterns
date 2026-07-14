@@ -288,6 +288,21 @@ blockquote {
   margin: 0;
 }
 
+/* Justified body copy, with hyphenation to avoid stretched word spacing. */
+.prose p,
+.page p,
+.prose li,
+.page li {
+  text-align: justify;
+  hyphens: auto;
+}
+
+/* Don't hyphenate link text — a broken "No-body knows" reads as a typo. */
+.prose a,
+.page a {
+  hyphens: manual;
+}
+
 .prose > .lede {
   margin-top: 0.25rem;
 }
