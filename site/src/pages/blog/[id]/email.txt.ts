@@ -1,6 +1,7 @@
 import type { APIContext } from "astro";
 import { getCollection } from "astro:content";
 import { excerptBlocks, DEFAULT_EXCERPT_BLOCKS } from "../../../lib/excerpt";
+import { postHref } from "../../../lib/blog";
 
 // Paste-ready newsletter draft for a post, at /blog/<id>/email.txt. The body is
 // the post's excerpt (first `excerpt-blocks` blocks, default 2) followed by a
@@ -17,7 +18,7 @@ export async function GET(context: APIContext) {
   const site = (context.site ?? "https://fepatterns.dev").toString().replace(/\/$/, "");
   const blocks = entry.data["excerpt-blocks"] ?? DEFAULT_EXCERPT_BLOCKS;
   const excerpt = excerptBlocks(entry.body, blocks);
-  const url = `${site}/blog/${entry.id}`;
+  const url = `${site}${postHref(entry)}`;
 
   const body = `${excerpt}\n\n<buttondown-button href="${url}">Keep reading</buttondown-button>\n`;
   return new Response(body, {

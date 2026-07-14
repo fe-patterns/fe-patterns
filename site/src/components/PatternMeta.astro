@@ -3,7 +3,7 @@ interface Props {
   goals?: string[];
   uses?: string[];
   implementedBy?: string;
-  exploredBy?: { id: string; title: string }[];
+  exploredBy?: { href: string; title: string }[];
 }
 
 const { goals = [], uses = [], implementedBy, exploredBy = [] } = Astro.props;
@@ -55,7 +55,7 @@ const hasAny =
             {exploredBy.map((post, i) => (
               <Fragment>
                 {i > 0 ? ", " : ""}
-                <a href={`/blog/${post.id}`}>{post.title}</a>
+                <a href={post.href}>{post.title}</a>
               </Fragment>
             ))}
           </dd>
