@@ -1,7 +1,14 @@
+# NOTE: despite the name, we don't run Prettier. `vp fmt` (oxfmt) reads
+# .gitignore and .prettierignore by default — there is no .oxfmtignore — so this
+# is the file that tells the code formatter what to leave alone.
+
 # Authored prose (Patterns, Blog posts, CONTEXT) is hand-formatted, not owned by
 # the code formatter. Revisit when the content milestone defines doc tooling.
 *.md
 **/*.md
+
+# Hand-indented, comment-heavy config — keep the readable nesting oxfmt would flatten.
+netlify.toml
 
 # Build output / deps (also in .gitignore, listed for tools reading this directly).
 node_modules/

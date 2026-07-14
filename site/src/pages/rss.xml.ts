@@ -18,8 +18,7 @@ const md = new MarkdownIt({ html: true, linkify: true });
 
 function toAbsolute(html: string, site: string): string {
   // Rewrite root-relative links/images so they resolve in an email client.
-  return html
-    .replace(/(href|src)="\/(?!\/)/g, `$1="${site.replace(/\/$/, "")}/`);
+  return html.replace(/(href|src)="\/(?!\/)/g, `$1="${site.replace(/\/$/, "")}/`);
 }
 
 function renderContent(body: string | undefined, site: string): string {

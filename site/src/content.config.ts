@@ -48,9 +48,7 @@ const pages = defineCollection({
     .object({
       title: z.string().optional(),
       description: z.string().optional(),
-      goals: z
-        .array(z.object({ name: z.string(), blurb: z.string() }))
-        .optional(),
+      goals: z.array(z.object({ name: z.string(), blurb: z.string() })).optional(),
     })
     .passthrough(),
 });
