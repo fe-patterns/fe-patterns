@@ -1,6 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import Base from "../../layouts/Base.astro";
+import { postHref } from "../../lib/blog";
 
 const posts = (await getCollection("blog")).sort(
   (a, b) =>
@@ -22,7 +23,7 @@ const fmt = (d?: Date) =>
       <ul class="entry-list">
         {posts.map((post) => (
           <li>
-            <a href={`/blog/${post.id}`}>{post.data.title ?? post.id}</a>
+            <a href={postHref(post)}>{post.data.title ?? post.id}</a>
             <div class="meta">{fmt(post.data.date)}</div>
           </li>
         ))}

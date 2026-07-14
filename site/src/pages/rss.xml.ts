@@ -4,6 +4,7 @@ import type { APIContext } from "astro";
 import MarkdownIt from "markdown-it";
 import sanitizeHtml from "sanitize-html";
 import { excerptBlocks, DEFAULT_EXCERPT_BLOCKS } from "../lib/excerpt";
+import { postHref } from "../lib/blog";
 
 // Excerpt feed: each item carries the post's first few blocks (`excerpt-blocks`,
 // default 2) as rendered HTML in `content:encoded`, followed by a "Keep reading"
@@ -18,8 +19,7 @@ const md = new MarkdownIt({ html: true, linkify: true });
 
 function toAbsolute(html: string, site: string): string {
   // Rewrite root-relative links/images so they resolve in an email client.
-  return html
-    .replace(/(href|src)="\/(?!\/)/g, `$1="${site.replace(/\/$/, "")}/`);
+  return html.replace(/(href|src)="\/(?!\/)/g, `$1="${site.replace(/\/$/, "")}/`);
 }
 
 function renderContent(body: string | undefined, site: string): string {
@@ -64,12 +64,12 @@ export async function GET(context: APIContext) {
     description: "Posts exploring frontend patterns.",
     site,
     items: posts.map((post) => {
-      const url = `${base}/blog/${post.id}/`;
+      const url = `${base}${postHref(post)}/`;
       const blocks = post.data["excerpt-blocks"] ?? DEFAULT_EXCERPT_BLOCKS;
       const teaser = renderContent(excerptBlocks(post.body, blocks), site);
       return {
         title: post.data.title ?? post.id,
-        link: `/blog/${post.id}/`,
+        link: `${postHref(post)}/`,
         pubDate: post.data.date,
         description: post.data.description ?? excerpt(post.body),
         content: `${teaser}\n<p><a href="${url}">Keep reading →</a></p>`,

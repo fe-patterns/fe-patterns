@@ -41,9 +41,7 @@ function initKit() {
     kitPromise = (async () => {
       // Resolve via node's module resolution so it survives Astro bundling the
       // endpoint into dist/ (import.meta.url would point at the output chunk).
-      const wasmPath = createRequire(import.meta.url).resolve(
-        "canvaskit-wasm/bin/canvaskit.wasm",
-      );
+      const wasmPath = createRequire(import.meta.url).resolve("canvaskit-wasm/bin/canvaskit.wasm");
       const CanvasKit = await CanvasKitInit({
         locateFile: () => wasmPath,
         // Feed the .wasm bytes directly — Emscripten's default fetch() path is
@@ -58,10 +56,7 @@ function initKit() {
         readFile(resolve(process.cwd(), "src/fonts/inter-700.ttf")),
         readFile(resolve(process.cwd(), "src/fonts/inter-400.ttf")),
       ]);
-      const fontMgr = CanvasKit.FontMgr.FromData(
-        toArrayBuffer(bold),
-        toArrayBuffer(regular),
-      );
+      const fontMgr = CanvasKit.FontMgr.FromData(toArrayBuffer(bold), toArrayBuffer(regular));
       if (!fontMgr) throw new Error("Failed to load Inter fonts");
       return { CanvasKit, fontMgr };
     })();
@@ -157,8 +152,7 @@ export async function renderCard(opts: CardOptions): Promise<Buffer> {
       parts.push(desc);
     }
     const gap = 24;
-    const totalH =
-      parts.reduce((h, p) => h + p.getHeight(), 0) + (desc ? gap : 0);
+    const totalH = parts.reduce((h, p) => h + p.getHeight(), 0) + (desc ? gap : 0);
     let y = HEIGHT - PAD - totalH;
     canvas.drawParagraph(title, PAD, y);
     if (desc) {
@@ -205,17 +199,10 @@ function paintGradientBackground(
   paint.delete();
 }
 
-async function paintHeroBackground(
-  CanvasKit: CanvasKit,
-  canvas: Canvas,
-  heroPath: string,
-) {
+async function paintHeroBackground(CanvasKit: CanvasKit, canvas: Canvas, heroPath: string) {
   const bytes = await readFile(heroPath);
   const img = CanvasKit.MakeImageFromEncoded(bytes);
-  if (!img)
-    throw new Error(
-      `Failed to decode hero image (use PNG, JPEG, or WebP): ${heroPath}`,
-    );
+  if (!img) throw new Error(`Failed to decode hero image (use PNG, JPEG, or WebP): ${heroPath}`);
   const iw = img.width();
   const ih = img.height();
 

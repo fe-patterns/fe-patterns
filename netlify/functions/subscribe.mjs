@@ -32,10 +32,7 @@ export default async (req, context) => {
 
   const key = process.env.BUTTONDOWN_API_KEY;
   if (!key) {
-    return json(
-      { status: "error", message: "Newsletter is temporarily unavailable." },
-      500,
-    );
+    return json({ status: "error", message: "Newsletter is temporarily unavailable." }, 500);
   }
 
   // Forward the real visitor IP so Buttondown's spam firewall scores the human,
@@ -82,8 +79,7 @@ export default async (req, context) => {
     return json(
       {
         status: "error",
-        message:
-          "This address previously unsubscribed and can't be re-added automatically.",
+        message: "This address previously unsubscribed and can't be re-added automatically.",
       },
       200,
     );

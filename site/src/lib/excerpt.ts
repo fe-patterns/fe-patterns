@@ -40,10 +40,7 @@ export function blankLineBeforeLists(markdown: string): string {
  * inside it — bold, links, list items — is preserved. Leading frontmatter, if any
  * survives into the body, is dropped.
  */
-export function excerptBlocks(
-  body: string | undefined,
-  blocks = DEFAULT_EXCERPT_BLOCKS,
-): string {
+export function excerptBlocks(body: string | undefined, blocks = DEFAULT_EXCERPT_BLOCKS): string {
   if (!body) return "";
   const withoutFrontmatter = body.replace(/^---[\s\S]*?---\s*/, "");
   const excerpt = withoutFrontmatter

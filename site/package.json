@@ -1,9 +1,9 @@
 {
   "name": "fe-patterns-site",
-  "type": "module",
   "version": "0.0.0",
   "private": true,
   "description": "The public Catalog site — renders Patterns, Blog posts, and the Goal layer.",
+  "type": "module",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",

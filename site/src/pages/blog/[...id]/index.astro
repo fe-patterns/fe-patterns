@@ -1,12 +1,13 @@
 ---
 import { getCollection, render } from "astro:content";
-import Base from "../../layouts/Base.astro";
-import HeroImage from "../../components/HeroImage.astro";
-import Newsletter from "../../components/Newsletter.astro";
+import Base from "../../../layouts/Base.astro";
+import HeroImage from "../../../components/HeroImage.astro";
+import Newsletter from "../../../components/Newsletter.astro";
+import { postSlug } from "../../../lib/blog";
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog");
-  return posts.map((entry) => ({ params: { id: entry.id }, props: { entry } }));
+  return posts.map((entry) => ({ params: { id: postSlug(entry) }, props: { entry } }));
 }
 
 const { entry } = Astro.props;

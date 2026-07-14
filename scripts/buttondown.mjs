@@ -49,7 +49,13 @@ const enc = encodeURIComponent(email);
 switch (cmd) {
   case "get": {
     const s = await api("GET", `/subscribers/${enc}`);
-    console.log(JSON.stringify({ email_address: s.email_address, type: s.type, metadata: s.metadata }, null, 2));
+    console.log(
+      JSON.stringify(
+        { email_address: s.email_address, type: s.type, metadata: s.metadata },
+        null,
+        2,
+      ),
+    );
     break;
   }
   case "reactivate": {
@@ -59,26 +65,42 @@ switch (cmd) {
   }
   case "create": {
     // Upsert past a suppressed/hard-deleted record: overwrite collision behavior.
-    const s = await api("POST", `/subscribers`, { email_address: email, type: "regular" }, {
-      "X-Buttondown-Collision-Behavior": "overwrite",
-    });
+    const s = await api(
+      "POST",
+      `/subscribers`,
+      { email_address: email, type: "regular" },
+      {
+        "X-Buttondown-Collision-Behavior": "overwrite",
+      },
+    );
     console.log(`OK — ${s.email_address} created/overwritten as type "${s.type}"`);
     break;
   }
   case "set-type": {
     const type = rest[0];
-    if (!type) { console.error("set-type needs a type, e.g. regular | unsubscribed"); process.exit(1); }
+    if (!type) {
+      console.error("set-type needs a type, e.g. regular | unsubscribed");
+      process.exit(1);
+    }
     const s = await api("PATCH", `/subscribers/${enc}`, { type });
     console.log(`OK — ${s.email_address} is now type "${s.type}"`);
     break;
   }
   case "set-meta": {
-    if (rest.length === 0) { console.error("set-meta needs key=value pairs"); process.exit(1); }
-    const metadata = Object.fromEntries(rest.map((pair) => {
-      const i = pair.indexOf("=");
-      if (i === -1) { console.error(`Bad pair "${pair}" — expected key=value`); process.exit(1); }
-      return [pair.slice(0, i), pair.slice(i + 1)];
-    }));
+    if (rest.length === 0) {
+      console.error("set-meta needs key=value pairs");
+      process.exit(1);
+    }
+    const metadata = Object.fromEntries(
+      rest.map((pair) => {
+        const i = pair.indexOf("=");
+        if (i === -1) {
+          console.error(`Bad pair "${pair}" — expected key=value`);
+          process.exit(1);
+        }
+        return [pair.slice(0, i), pair.slice(i + 1)];
+      }),
+    );
     const s = await api("PATCH", `/subscribers/${enc}`, { metadata });
     console.log(`OK — metadata now: ${JSON.stringify(s.metadata)}`);
     break;

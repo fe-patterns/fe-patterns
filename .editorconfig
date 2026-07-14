@@ -1,0 +1,20 @@
+# Editor-agnostic formatting baseline for the workspace.
+#
+# JS/TS/JSON are formatted by `vp fmt` (oxfmt), which already defaults to these
+# settings. This file exists mainly so editors format the files oxfmt does NOT
+# handle — .astro and .css — the same way on save, instead of falling back to
+# their own defaults (e.g. 4-space indent).
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Prose is hand-formatted (see .prettierignore); trailing spaces can be
+# meaningful (Markdown hard line breaks).
+[*.md]
+trim_trailing_whitespace = false
