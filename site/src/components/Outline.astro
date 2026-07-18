@@ -112,5 +112,32 @@ const entries = outlineEntries(Astro.props.headings);
       rootMargin: `0px 0px -${(1 - SPY_LINE) * 100}% 0px`,
     });
     for (const h of headings) observer.observe(h);
+
+    // Anchor jumps are instant, except when the target is already within a
+    // viewport height — there an instant jump reads as "nothing happened", so
+    // glide instead. Done by flipping scroll-behavior on <html> just for the
+    // native hash navigation, then restoring it once the glide has settled.
+    const prefersMotion = matchMedia("(prefers-reduced-motion: no-preference)");
+    nav.addEventListener("click", (event) => {
+      const link = event.target instanceof Element ? event.target.closest("a") : null;
+      if (!link) return;
+      const target = document.getElementById(decodeURIComponent(link.hash.slice(1)));
+      if (!target) return;
+      const delta = Math.abs(target.getBoundingClientRect().top);
+      if (prefersMotion.matches && delta < window.innerHeight) {
+        const root = document.documentElement;
+        root.style.scrollBehavior = "smooth";
+        setTimeout(() => {
+          root.style.scrollBehavior = "";
+        }, 700);
+      }
+      if (link.classList.contains("subscribe")) {
+        // Land the reader in the form, not just at it. No-op if the form is
+        // hidden (already subscribed); preventScroll keeps the jump in charge.
+        requestAnimationFrame(() => {
+          document.getElementById("bd-first-name")?.focus({ preventScroll: true });
+        });
+      }
+    });
   }
 </script>
