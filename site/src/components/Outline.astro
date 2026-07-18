@@ -1,0 +1,103 @@
+---
+import { outlineEntries, type Heading } from "../lib/outline";
+
+interface Props {
+  headings: Heading[];
+}
+
+const entries = outlineEntries(Astro.props.headings);
+---
+
+{
+  entries.length > 0 && (
+    <nav class="outline" aria-label="Outline">
+      <ul>
+        {entries.map(({ slug, text }) => (
+          <li>
+            <a href={`#${slug}`}>{text}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}
+
+<style>
+  /* Floats in the empty right margin beside the centered --measure column, so
+     the article never reflows. Fixed (rather than sticky) because the column
+     layout has no sidebar track to stick within. Shown only when the viewport
+     fits column + outline on both sides: 2 × (22 + 2.5 + 13) = 75rem. */
+  .outline {
+    display: none;
+    position: fixed;
+    top: 8rem;
+    left: calc(50% + var(--measure) / 2 + 2.5rem);
+    width: 13rem;
+    max-height: calc(100vh - 10rem);
+    overflow-y: auto;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+
+  @media (min-width: 76rem) {
+    .outline {
+      display: block;
+    }
+  }
+
+  .outline ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .outline a {
+    color: var(--muted);
+    text-decoration: none;
+  }
+
+  .outline a:hover {
+    color: var(--fg);
+  }
+
+  .outline a[aria-current="true"] {
+    color: var(--fg);
+    font-weight: 500;
+  }
+</style>
+
+<script>
+  // Scroll-spy: the active entry is the last h2 whose top has crossed the upper
+  // 40% of the viewport. Recomputing only when a heading crosses that line is
+  // enough — the active section can't change mid-section.
+  const nav = document.querySelector(".outline");
+  if (nav) {
+    const links = new Map<string, HTMLAnchorElement>(
+      [...nav.querySelectorAll("a")].map((a) => [
+        decodeURIComponent(a.hash.slice(1)),
+        a,
+      ]),
+    );
+    const headings = [...document.querySelectorAll(".prose h2[id]")].filter((h) =>
+      links.has(h.id),
+    );
+
+    const update = () => {
+      const line = window.innerHeight * 0.4;
+      const current = headings.findLast(
+        (h) => h.getBoundingClientRect().top <= line,
+      );
+      for (const [id, link] of links) {
+        if (id === current?.id) link.setAttribute("aria-current", "true");
+        else link.removeAttribute("aria-current");
+      }
+    };
+
+    const observer = new IntersectionObserver(update, {
+      rootMargin: "0px 0px -60% 0px",
+    });
+    for (const h of headings) observer.observe(h);
+  }
+</script>

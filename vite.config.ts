@@ -5,7 +5,7 @@ import { defineConfig } from "vite-plus";
 export default defineConfig({
   plugins: [],
   test: {
-    include: ["libs/**/*.test.ts"],
+    include: ["libs/**/*.test.ts", "site/src/**/*.test.ts"],
   },
   lint: {
     ignorePatterns: ["dist/**", "node_modules/**"],
