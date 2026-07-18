@@ -26,7 +26,8 @@ const entries = outlineEntries(Astro.props.headings);
   /* Floats in the empty right margin beside the centered --measure column, so
      the article never reflows. Fixed (rather than sticky) because the column
      layout has no sidebar track to stick within. Shown only when the viewport
-     fits column + outline on both sides: 2 × (22 + 2.5 + 13) = 75rem. */
+     fits column + outline on both sides — 2 × (22 + 2.5 + 13) = 75rem — plus
+     a rem of slack. */
   .outline {
     display: none;
     position: fixed;
@@ -69,9 +70,10 @@ const entries = outlineEntries(Astro.props.headings);
 </style>
 
 <script>
-  // Scroll-spy: the active entry is the last h2 whose top has crossed the upper
-  // 40% of the viewport. Recomputing only when a heading crosses that line is
-  // enough — the active section can't change mid-section.
+  // Scroll-spy: the active entry is the last h2 whose top has crossed SPY_LINE
+  // (a fraction of viewport height). Recomputing only when a heading crosses
+  // that line is enough — the active section can't change mid-section.
+  const SPY_LINE = 0.4;
   const nav = document.querySelector(".outline");
   if (nav) {
     const links = new Map<string, HTMLAnchorElement>(
@@ -85,7 +87,7 @@ const entries = outlineEntries(Astro.props.headings);
     );
 
     const update = () => {
-      const line = window.innerHeight * 0.4;
+      const line = window.innerHeight * SPY_LINE;
       const current = headings.findLast(
         (h) => h.getBoundingClientRect().top <= line,
       );
@@ -96,7 +98,7 @@ const entries = outlineEntries(Astro.props.headings);
     };
 
     const observer = new IntersectionObserver(update, {
-      rootMargin: "0px 0px -60% 0px",
+      rootMargin: `0px 0px -${(1 - SPY_LINE) * 100}% 0px`,
     });
     for (const h of headings) observer.observe(h);
   }
