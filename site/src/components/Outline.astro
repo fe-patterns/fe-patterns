@@ -18,6 +18,7 @@ const entries = outlineEntries(Astro.props.headings);
           </li>
         ))}
       </ul>
+      <a class="subscribe" href="#newsletter">Subscribe to newsletter</a>
     </nav>
   )
 }
@@ -67,6 +68,16 @@ const entries = outlineEntries(Astro.props.headings);
     color: var(--fg);
     font-weight: 500;
   }
+
+  /* Not an entry — a small CTA jumping to the Newsletter box at the page
+     bottom, set off from the section list by the site's hairline rule. */
+  .outline .subscribe {
+    display: block;
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border);
+    color: var(--accent);
+  }
 </style>
 
 <script>
@@ -77,7 +88,7 @@ const entries = outlineEntries(Astro.props.headings);
   const nav = document.querySelector(".outline");
   if (nav) {
     const links = new Map<string, HTMLAnchorElement>(
-      [...nav.querySelectorAll("a")].map((a) => [
+      [...nav.querySelectorAll<HTMLAnchorElement>("ul a")].map((a) => [
         decodeURIComponent(a.hash.slice(1)),
         a,
       ]),
