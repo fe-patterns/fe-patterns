@@ -13,3 +13,6 @@ export const WORDMARK = "Frontend Patterns";
 
 /** Brand accent (light-theme value), as [r, g, b] 0–255. */
 export const ACCENT: [number, number, number] = [0x91, 0xa7, 0xff];
+
+/** The site's sole author — bylines (post page, RSS) all point at this name. */
+export const AUTHOR = "Bogdan Zaharia";

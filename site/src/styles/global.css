@@ -365,11 +365,45 @@ blockquote {
   padding: 0;
 }
 
-/* Blog post meta */
-.post-meta {
-  color: var(--muted);
+/* Blog post byline — avatar with name and date stacked beside it. */
+.post-byline {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-block: 0.25rem 1.75rem;
   font-size: 0.9rem;
-  margin-top: -0.25rem;
+  line-height: 1.4;
+}
+
+.byline-avatar {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.byline-text a {
+  color: var(--fg);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.byline-text a:hover {
+  color: var(--accent);
+}
+
+.byline-date {
+  color: var(--muted);
+}
+
+/* About-the-author portrait (the image right after the #author heading). */
+.page #author + p img {
+  width: 5.5rem;
+  height: 5.5rem;
+  border-radius: 50%;
+  object-fit: cover;
+  float: left;
+  margin: 0.35rem 1.25rem 0.5rem 0;
 }
 
 .post-explores {

@@ -1,4 +1,4 @@
-# fe-patterns site
+# Frontend Patterns site
 
 ## Social cards / hero images
 

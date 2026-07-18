@@ -5,6 +5,7 @@ import MarkdownIt from "markdown-it";
 import sanitizeHtml from "sanitize-html";
 import { excerptBlocks, DEFAULT_EXCERPT_BLOCKS } from "../lib/excerpt";
 import { postHref } from "../lib/blog";
+import { AUTHOR } from "../lib/brand";
 
 // Excerpt feed: each item carries the post's first few blocks (`excerpt-blocks`,
 // default 2) as rendered HTML in `content:encoded`, followed by a "Keep reading"
@@ -60,9 +61,12 @@ export async function GET(context: APIContext) {
   );
 
   return rss({
-    title: "fe-patterns · Blog",
+    title: "Frontend Patterns · Blog",
     description: "Posts exploring frontend patterns.",
     site,
+    // Bylines ride on Dublin Core: RSS 2.0's own <author> wants an email
+    // address, and dc:creator is the name-only form feed readers expect.
+    xmlns: { dc: "http://purl.org/dc/elements/1.1/" },
     items: posts.map((post) => {
       const url = `${base}${postHref(post)}/`;
       const blocks = post.data["excerpt-blocks"] ?? DEFAULT_EXCERPT_BLOCKS;
@@ -73,6 +77,7 @@ export async function GET(context: APIContext) {
         pubDate: post.data.date,
         description: post.data.description ?? excerpt(post.body),
         content: `${teaser}\n<p><a href="${url}">Keep reading →</a></p>`,
+        customData: `<dc:creator>${AUTHOR}</dc:creator>`,
       };
     }),
   });
