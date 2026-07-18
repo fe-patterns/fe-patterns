@@ -14,3 +14,4 @@ deno.lock
 # Private authoring workspace + Obsidian vault — see docs/authoring.md
 drafts/
 .obsidian/
+CLAUDE.local.md
