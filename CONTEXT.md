@@ -57,7 +57,8 @@ _Avoid_: macro, meta-skill
 
 **Blog post**:
 A narrative, public deliverable that introduces or explores one or more Patterns.
-Prose, not code.
+Prose, not code. Human-authored and AI-reviewed — every post carries the AI
+end-note, a fixed disclosure line linking to the site's AI page.
 _Avoid_: article, essay
 
 **Guard**:
