@@ -20,3 +20,13 @@ export function postSlug(entry: CollectionEntry<"blog">): string {
 export function postHref(entry: CollectionEntry<"blog">): string {
   return `/blog/${postSlug(entry)}`;
 }
+
+const longDate = new Intl.DateTimeFormat("en-US", {
+  dateStyle: "long",
+  timeZone: "UTC",
+});
+
+/** Reader-facing date, e.g. `July 4, 2026` — UTC, matching the URL segments. */
+export function formatDate(date?: Date): string {
+  return date ? longDate.format(date) : "";
+}

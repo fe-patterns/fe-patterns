@@ -1,11 +1,14 @@
 ---
 import { getCollection, render } from "astro:content";
+import { Image } from "astro:assets";
 import Base from "../../../layouts/Base.astro";
 import HeroImage from "../../../components/HeroImage.astro";
 import AiNote from "../../../components/AiNote.astro";
 import Newsletter from "../../../components/Newsletter.astro";
 import Outline from "../../../components/Outline.astro";
-import { postSlug } from "../../../lib/blog";
+import { formatDate, postSlug } from "../../../lib/blog";
+import { AUTHOR } from "../../../lib/brand";
+import avatar from "../../../assets/avatar.jpg";
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog");
@@ -18,8 +21,6 @@ const { Content, headings } = await render(entry);
 const title = entry.data.title ?? entry.id;
 const explores = entry.data.explores ?? [];
 const hero = entry.data.hero;
-const fmt = (d?: Date) =>
-  d ? d.toISOString().slice(0, 10).replace(/-/g, ".") : "";
 ---
 
 <Base
@@ -31,7 +32,13 @@ const fmt = (d?: Date) =>
   <article class="prose">
     {hero && <HeroImage src={hero} alt={title} />}
     <h1>{title}</h1>
-    {entry.data.date && <p class="post-meta">{fmt(entry.data.date)}</p>}
+    <div class="post-byline">
+      <Image class="byline-avatar" src={avatar} alt="" width={96} height={96} />
+      <div class="byline-text">
+        <a href="/about#author">{AUTHOR}</a>
+        {entry.data.date && <div class="byline-date">{formatDate(entry.data.date)}</div>}
+      </div>
+    </div>
     <Content />
     {
       explores.length > 0 && (

@@ -1,17 +1,12 @@
 ---
 import { getCollection } from "astro:content";
 import Base from "../../layouts/Base.astro";
-import { postHref } from "../../lib/blog";
+import { formatDate, postHref } from "../../lib/blog";
 
 const posts = (await getCollection("blog")).sort(
   (a, b) =>
     (b.data.date?.getTime() ?? 0) - (a.data.date?.getTime() ?? 0),
 );
-
-const fmt = (d?: Date) =>
-  d
-    ? d.toISOString().slice(0, 10).replace(/-/g, ".")
-    : "";
 ---
 
 <Base title="Blog" description="Posts exploring frontend patterns.">
@@ -24,7 +19,7 @@ const fmt = (d?: Date) =>
         {posts.map((post) => (
           <li>
             <a href={postHref(post)}>{post.data.title ?? post.id}</a>
-            <div class="meta">{fmt(post.data.date)}</div>
+            <div class="meta">{formatDate(post.data.date)}</div>
           </li>
         ))}
       </ul>
