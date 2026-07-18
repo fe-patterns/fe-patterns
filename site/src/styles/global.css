@@ -417,3 +417,18 @@ blockquote {
 .post-explores span {
   margin-right: 0.5rem;
 }
+
+/* AI end-note: mirrors .post-explores when it stands alone, tucks under it otherwise */
+.ai-note {
+  margin-top: 3rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.post-explores + .ai-note {
+  margin-top: 0.75rem;
+  padding-top: 0;
+  border-top: none;
+}

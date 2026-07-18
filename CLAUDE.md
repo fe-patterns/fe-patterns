@@ -8,7 +8,7 @@ Always use **pnpm** — this is a pnpm workspace (`pnpm-workspace.yaml`, `pnpm-l
 
 ### Issue tracker
 
-Issues are tracked as GitHub issues via the `gh` CLI. External PRs are not a triage surface (personal project). See `docs/agents/issue-tracker.md`.
+Issues are tracked as GitHub issues via the `gh` CLI and organized on the org Project board [fe-patterns #1](https://github.com/orgs/fe-patterns/projects/1) (needs the `project` token scope). External PRs are not a triage surface (personal project). See `docs/agents/issue-tracker.md`.
 
 ### Triage labels
 

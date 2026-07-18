@@ -31,3 +31,12 @@ content site. Both embed Vite internally, but each is scoped to its own package
   independent of the libs' toolchain — expected for a monorepo app.
 - Netlify deploys `fe-patterns` as a standalone repo; `netlify.toml` lives at the
   repo root.
+
+## Amendment (2026-07-18): `vp test` runs the site's pure-TS unit tests
+
+One carve-out to "they never invoke one another": plain TypeScript logic under
+`site/src` (no Astro imports) is unit-tested by the root `vp test` glob
+(`site/src/**/*.test.ts`), because Astro ships no test runner and a second
+Vitest install just for the site would reintroduce the "two Vites" problem in
+worse form. Astro remains the only thing that *builds* site code; `vp` only
+runs its framework-free tests.

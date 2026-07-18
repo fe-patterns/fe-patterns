@@ -1,0 +1,14 @@
+---
+import { getEntry, render } from "astro:content";
+import Base from "../layouts/Base.astro";
+
+const entry = await getEntry("pages", "ai");
+if (!entry) throw new Error("Missing content page: pages/ai.md");
+const { Content } = await render(entry);
+---
+
+<Base title={entry.data.title} description={entry.data.description}>
+  <div class="prose page">
+    <Content />
+  </div>
+</Base>

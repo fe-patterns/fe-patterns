@@ -1,0 +1,143 @@
+---
+import { outlineEntries, type Heading } from "../lib/outline";
+
+interface Props {
+  headings: Heading[];
+}
+
+const entries = outlineEntries(Astro.props.headings);
+---
+
+{
+  entries.length > 0 && (
+    <nav class="outline" aria-label="Outline">
+      <ul>
+        {entries.map(({ slug, text }) => (
+          <li>
+            <a href={`#${slug}`}>{text}</a>
+          </li>
+        ))}
+      </ul>
+      <a class="subscribe" href="#newsletter">Subscribe to newsletter</a>
+    </nav>
+  )
+}
+
+<style>
+  /* Floats in the empty right margin beside the centered --measure column, so
+     the article never reflows. Fixed (rather than sticky) because the column
+     layout has no sidebar track to stick within. Shown only when the viewport
+     fits column + outline on both sides — 2 × (22 + 2.5 + 13) = 75rem — plus
+     a rem of slack. */
+  .outline {
+    display: none;
+    position: fixed;
+    top: 8rem;
+    left: calc(50% + var(--measure) / 2 + 2.5rem);
+    width: 13rem;
+    max-height: calc(100vh - 10rem);
+    overflow-y: auto;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+
+  @media (min-width: 76rem) {
+    .outline {
+      display: block;
+    }
+  }
+
+  .outline ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .outline a {
+    color: var(--muted);
+    text-decoration: none;
+  }
+
+  .outline a:hover {
+    color: var(--fg);
+  }
+
+  .outline a[aria-current="true"] {
+    color: var(--fg);
+    font-weight: 500;
+  }
+
+  /* Not an entry — a small CTA jumping to the Newsletter box at the page
+     bottom, set off from the section list by the site's hairline rule. */
+  .outline .subscribe {
+    display: block;
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border);
+    color: var(--accent);
+  }
+</style>
+
+<script>
+  // Scroll-spy: the active entry is the last h2 whose top has crossed SPY_LINE
+  // (a fraction of viewport height). Recomputing only when a heading crosses
+  // that line is enough — the active section can't change mid-section.
+  const SPY_LINE = 0.4;
+  const nav = document.querySelector(".outline");
+  if (nav) {
+    const links = new Map<string, HTMLAnchorElement>(
+      [...nav.querySelectorAll<HTMLAnchorElement>("ul a")].map((a) => [
+        decodeURIComponent(a.hash.slice(1)),
+        a,
+      ]),
+    );
+    const headings = [...document.querySelectorAll(".prose h2[id]")].filter((h) =>
+      links.has(h.id),
+    );
+
+    const update = () => {
+      const line = window.innerHeight * SPY_LINE;
+      const current = headings.findLast(
+        (h) => h.getBoundingClientRect().top <= line,
+      );
+      for (const [id, link] of links) {
+        if (id === current?.id) link.setAttribute("aria-current", "true");
+        else link.removeAttribute("aria-current");
+      }
+    };
+
+    const observer = new IntersectionObserver(update, {
+      rootMargin: `0px 0px -${(1 - SPY_LINE) * 100}% 0px`,
+    });
+    for (const h of headings) observer.observe(h);
+
+    // Anchor jumps are instant, except when the target is already within a
+    // viewport height — there an instant jump reads as "nothing happened", so
+    // glide instead. Done by flipping scroll-behavior on <html> just for the
+    // native hash navigation, then restoring it once the glide has settled.
+    const prefersMotion = matchMedia("(prefers-reduced-motion: no-preference)");
+    nav.addEventListener("click", (event) => {
+      const link = event.target instanceof Element ? event.target.closest("a") : null;
+      if (!link) return;
+      const target = document.getElementById(decodeURIComponent(link.hash.slice(1)));
+      if (!target) return;
+      const delta = Math.abs(target.getBoundingClientRect().top);
+      if (prefersMotion.matches && delta < window.innerHeight) {
+        const root = document.documentElement;
+        root.style.scrollBehavior = "smooth";
+        setTimeout(() => {
+          root.style.scrollBehavior = "";
+        }, 700);
+      }
+      if (link.classList.contains("subscribe")) {
+        // Land the reader in the form, not just at it. No-op if the form is
+        // hidden (already subscribed); preventScroll keeps the jump in charge.
+        requestAnimationFrame(() => {
+          document.getElementById("bd-first-name")?.focus({ preventScroll: true });
+        });
+      }
+    });
+  }
+</script>
