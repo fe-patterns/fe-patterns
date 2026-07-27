@@ -225,6 +225,11 @@ const {
 
         if (body.status === "subscribed") {
           remember();
+          // Umami conversion goal: a new signup from the site (double-opt-in
+          // confirmation happens off-site, so this submit is the trackable event).
+          (
+            window as unknown as { umami?: { track?: (name: string) => void } }
+          ).umami?.track?.("newsletter-subscribe");
           showDone("Almost there — check your inbox to confirm your subscription.");
           return;
         }
